@@ -55,19 +55,23 @@ void envia_info(){
 	char buffer[35];
 	uart_print("FFT MAGN_FREC:\r\n\r\n");
 	for(int i=0;i<N_out;i++){
-		float frequency=(i *FSAMPLE) /N;
+		float frequency = (i * (float)FSAMPLE) / (float)N;
 		float mag = Mag[i];
 
-		// Separar parte entera y decimal
+		// Evitar valores negativos por error numérico
+		if(mag < 0) mag = 0.0f;
+
 		int freq_int = (int)frequency;
 		int freq_dec = (int)((frequency - freq_int) * 10);
+		if(freq_dec < 0) freq_dec = -freq_dec;  // por si acaso
 
 		int mag_int  = (int)mag;
 		int mag_dec  = (int)((mag - mag_int) * 10);
+		if(mag_dec < 0) mag_dec = -mag_dec;
 
-		sprintf(buffer, "F:%d.%d Hz, M:%d.%d\r\n", freq_int, freq_dec, mag_int, mag_dec);
+		sprintf(buffer, "F:%d.%d Hz, M:%d.%d\r\n",
+		freq_int, freq_dec, mag_int, mag_dec);
 		uart_print(buffer);
-
 	}
 }
 //88888888888888888888888888888888888888888888888888888888888888888888

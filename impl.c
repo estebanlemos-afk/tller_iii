@@ -56,11 +56,18 @@ void envia_info(){
 	uart_print("FFT MAGN_FREC:\r\n\r\n");
 	for(int i=0;i<N_out;i++){
 		float frequency=(i *FSAMPLE) /N;
-		sprintf(buffer,"F:%.1f Hz",frequency);
+		float mag = Mag[i];
+
+		// Separar parte entera y decimal
+		int freq_int = (int)frequency;
+		int freq_dec = (int)((frequency - freq_int) * 10);
+
+		int mag_int  = (int)mag;
+		int mag_dec  = (int)((mag - mag_int) * 10);
+
+		sprintf(buffer, "F:%d.%d Hz, M:%d.%d\r\n", freq_int, freq_dec, mag_int, mag_dec);
 		uart_print(buffer);
-		sprintf(buffer,", M:%.1f",Mag[i]);
-		uart_print(buffer);
-		uart_print("\r\n");
+
 	}
 }
 //88888888888888888888888888888888888888888888888888888888888888888888
@@ -91,7 +98,7 @@ void calc_FFT()
 		K =K/2;
 		goto L2;
 		L3: J = J+K;
-		
+	}
 		for(L=1; L<=M;L++)
 		{
 			LE=ceil(pow(2,L));//busca entero mas cercano
@@ -130,5 +137,4 @@ void calc_FFT()
 		{
 			Mag[L] = sqrt(REX[L]*REX[L]+ IMX[L]*IMX[L]);
 		}
-	}
 	}

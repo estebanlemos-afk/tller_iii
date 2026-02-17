@@ -4,8 +4,6 @@
  * Created: 17/02/2026 11:02:23 a. m.
  * Author : Institucional
  */ 
-
-#include <avr/io.h>
 #include "setup.h"
 
 int main(void)

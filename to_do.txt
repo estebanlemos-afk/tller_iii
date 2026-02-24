@@ -1,0 +1,4 @@
+-comprobar funcionalidad de microfono ✔️
+-hacer pruebas de percepcion (maxima y minima distancia de deteccion desde distintos angulos) 
+-verificar errores (ver que no se confunda en caso de ruido, verificar en espacios isolados) 
+-especificaciones del sistema 

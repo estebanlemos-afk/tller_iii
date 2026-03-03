@@ -27,6 +27,7 @@ float Mag[N];// MAGNITUDES
 int I, IP, JM1, K, L, LE, LE2, NM1, ND2, M, J;
 float TR, TI, UR, UI, SR, SI;
 
+
 void uart_init(unsigned int ubrr);
 void ADC_init();
 unsigned int ADC_read(unsigned char adc_input);
@@ -34,8 +35,10 @@ void uart_transmit(unsigned char data);
 void uart_print(const char *str);
 void capture_signal(unsigned char canal);
 void envia_info();
+void ventana_hammin(); 
 void calc_FFT();
 
+int max_indx();
 
 
 #endif /* SETUP_H_ */

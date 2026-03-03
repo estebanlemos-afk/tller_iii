@@ -14,12 +14,13 @@ int main(void)
 	PORTB=0;
 	while(1)
 	{
-		PORTB=1;
+		PORTB|=(1<<PB0);
 		capture_signal(0);
+		ventana_hammin();
 		calc_FFT();
 		envia_info();
 		_delay_ms(300);
-		PORTB=0;
+		PORTB &=~(1<<PB0);
 		_delay_ms(300);
 	}
 }

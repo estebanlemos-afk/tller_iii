@@ -53,25 +53,59 @@ void capture_signal(unsigned char canal) {
 //88888888888888888888888888888888888888888888888888888888888888888888
 void envia_info(){
 	char buffer[35];
+	char buffer1[50]; // Un poco más grande para que quepa todo el texto
 	uart_print("FFT MAGN_FREC:\r\n\r\n");
-	for(int i=0;i<N_out;i++){
+	
+	// Bucle original para imprimir todas las frecuencias
+	for(int i = 0; i < N_out; i++){
 		float frequency = (i * (float)FSAMPLE) / (float)N;
 		float mag = Mag[i];
 
-		// Evitar valores negativos por error numérico
 		if(mag < 0) mag = 0.0f;
 
 		int freq_int = (int)frequency;
 		int freq_dec = (int)((frequency - freq_int) * 10);
-		if(freq_dec < 0) freq_dec = -freq_dec;  // por si acaso
+		if(freq_dec < 0) freq_dec = -freq_dec;
 
 		int mag_int  = (int)mag;
 		int mag_dec  = (int)((mag - mag_int) * 10);
 		if(mag_dec < 0) mag_dec = -mag_dec;
 
-		sprintf(buffer, "F:%d.%d Hz, M:%d.%d\r\n",
-		freq_int, freq_dec, mag_int, mag_dec);
+		sprintf(buffer, "F:%d.%d Hz, M:%d.%d\r\n", freq_int, freq_dec, mag_int, mag_dec);
 		uart_print(buffer);
+	}
+	
+	// --- NUEVO: Calcular frecuencia y magnitud máxima ---
+	
+	// 1. Obtenemos la posición del máximo
+	int max_idx = max_indx();
+	
+	// 2. Leemos la magnitud en esa posición
+	float max_mag = Mag[max_idx];
+	
+	// 3. Calculamos la frecuencia correspondiente a esa posición
+	float max_freq = (max_idx * (float)FSAMPLE) / (float)N;
+	
+	// 4. Preparamos los valores para imprimirlos (enteros y decimales)
+	int mag_int = (int)max_mag;
+	int mag_dec = (int)((max_mag - mag_int) * 10);
+	if (mag_dec < 0) mag_dec = -mag_dec;
+	
+	int freq_int = (int)max_freq;
+	int freq_dec = (int)((max_freq - freq_int) * 10);
+	if (freq_dec < 0) freq_dec = -freq_dec;
+	
+	// 5. Imprimimos el resultado final
+	sprintf(buffer1, "\r\n--> MAX FREC: %d.%d Hz (Mag: %d.%d)\r\n", freq_int, freq_dec, mag_int, mag_dec);
+	uart_print(buffer1);
+	
+	float freq_min = 700.0;
+	float freq_max = 900.0;
+	
+	if (max_freq > freq_min && max_freq < freq_max) {
+		PORTB |= (1 << PB1);  // Enciende el LED en PB1 (Pin 9 en Arduino)
+		} else {
+		PORTB &= ~(1 << PB1); // Apaga el LED en PB1
 	}
 }
 //88888888888888888888888888888888888888888888888888888888888888888888
@@ -142,3 +176,25 @@ void calc_FFT()
 			Mag[L] = sqrt(REX[L]*REX[L]+ IMX[L]*IMX[L]);
 		}
 	}
+	
+void ventana_hammin(void) {
+	for (uint16_t i = 0; i < N; i++) {
+		float w = 0.54- 0.46 * cosf((2.0 * (float)M_PI * i) / (N- 1));
+		REX[i] *= w;
+	}
+}
+
+int max_indx()
+{
+	float max_val = -1.0;
+	int max_idx = 1; // Asumimos por defecto el índice 1 por si acaso
+	
+	// Empezamos desde i = 1 para saltarnos Mag[0] (0 Hz / DC)
+	for (int i = 1; i < N_out; i++) {
+		if (Mag[i] > max_val) {
+			max_val = Mag[i];
+			max_idx = i; // Guardamos en qué posición ocurrió el máximo
+		}
+	}
+	return max_idx;
+}

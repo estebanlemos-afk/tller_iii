@@ -8,23 +8,27 @@
 #include <avr/io.h>
 #include "setup.h"
 
-volatile uint16_t target_freq = 750;
 
 int main(void)
 {
-    /* PB0 como salida (LED de prueba) */
-    DDRB  |= (1 << PB4);
-    /* PB5 (OC1A) como salida para señal hardware de timer */
-    DDRB  |= (1 << PB5);
+	//volatile uint16_t target_freq = 750;
+	ADC_init();
+	DDRB=255;
+	/* PB5 (OC1A) como salida para señal hardware de timer */
+	//DDRB  |= (1 << PB5);
+	PORTB=0;
 
-    /* Iniciar CTC a 500 Hz */
-    timer1_ctc_init(target_freq);
+    //iniciar a velocidad normal (800Hz)
+    timer1_ctc_init(800);
 
     /* Habilitar interrupciones globales */
     sei();
 
     while (1)
     {
+		prom_FFT();
+		working();
+		_delay_ms(300);
         /*
          * Ejemplo: cambiar frecuencia desde aquí.
          * En una app real vendría de UART, ADC, botones, etc.

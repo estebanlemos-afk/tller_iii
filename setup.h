@@ -27,7 +27,33 @@
 #include <avr/interrupt.h>
 #include <stdint.h>
 
-#define F_CPU			16000000UL
+#define F_CPU		16000000UL
+
+#include <util/delay.h>
+#include <math.h>
+#include <stdio.h>
+//FFT
+#define FSAMPLE 2000
+#define TS (1000000/FSAMPLE)-22
+
+#define N 256// CANTIDAD DE MUESTRAS
+#define N_out (N/2)+1
+
+float REX[N];// PARTE REAL
+float IMX[N];//  PARTE IMAGINARIA
+float Mag[N];// MAGNITUDES
+
+int I, IP, JM1, K, L, LE, LE2, NM1, ND2, M, J;
+float TR, TI, UR, UI, SR, SI;
+
+void ADC_init();
+unsigned int ADC_read(unsigned char adc_input);
+void capture_signal(unsigned char canal);
+void ventana_hammin(); 
+int max_indx();
+void calc_FFT();
+void prom_FFT();
+//band
 #define PRESCALER		64
 #define F_MIN_HZ_VEL	127
 #define F_MAX_HZ_VEL    1273
@@ -37,9 +63,10 @@
 /* OCR1A para frecuencia objetivo con N=64 */
 #define OCR_FROM_FREQ(f) ((uint16_t)((F_CPU / (2 * PRESCALER * (f))) - 1))
 
+uint16_t mapping(int v_act);
 void timer1_ctc_init(uint16_t f_target);
 void timer1_set_freq(uint16_t f_target);
-uint16_t mapping(int v_act);
+void working(void);
 
 
 

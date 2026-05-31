@@ -33,10 +33,10 @@
 #include <math.h>
 #include <stdio.h>
 //FFT
-#define FSAMPLE 2000
+#define FSAMPLE 2000UL
 #define TS (1000000/FSAMPLE)-22
 
-#define N 256// CANTIDAD DE MUESTRAS
+#define N 256UL// CANTIDAD DE MUESTRAS
 #define N_out (N/2)+1
 
 float REX[N];// PARTE REAL
@@ -53,12 +53,13 @@ void ventana_hammin();
 int max_indx();
 void calc_FFT();
 void prom_FFT();
+
 //band
-#define PRESCALER		64
-#define F_MIN_HZ_VEL	127
-#define F_MAX_HZ_VEL    1273
-#define F_MIN_HZ_SND	700
-#define F_MAX_HZ_SND	900
+#define PRESCALER		64UL
+#define F_MIN_HZ_VEL	127UL
+#define F_MAX_HZ_VEL    1273UL
+#define F_MIN_HZ_SND	700UL
+#define F_MAX_HZ_SND	900UL
 
 /* OCR1A para frecuencia objetivo con N=64 */
 #define OCR_FROM_FREQ(f) ((uint16_t)((F_CPU / (2 * PRESCALER * (f))) - 1))
@@ -68,6 +69,14 @@ void timer1_ctc_init(uint16_t f_target);
 void timer1_set_freq(uint16_t f_target);
 void working(void);
 
+//UART
+#define BAUD 57600
+#define MYUBRR F_CPU/16/BAUD-1
+
+void uart_init(unsigned int ubrr);
+void uart_transmit(unsigned char data);
+void uart_print(const char *str);
+void envia_info();
 
 
 

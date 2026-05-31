@@ -29,6 +29,7 @@ uint16_t ADC_read(uint8_t adc_input)
 void capture_signal(unsigned char ch) {
 	for (unsigned int i = 0; i < N; i++) {
 		REX[i] = ADC_read(ch);
+		IMX[i] = 0;
 		_delay_us(TS);
 	}
 }
@@ -123,8 +124,8 @@ void calc_FFT()
 	}
 }
 //==================================================//
-int idx=0;
-float freq=0,mag=0;
+volatile int idx=0;
+volatile float freq=0,mag=0;
 void prom_FFT(){
 	float aux_freq=0,aux_mag=0;
 	for (int i = 0; i < 5; i++) {
@@ -202,3 +203,36 @@ void working(){
 		timer1_set_freq(800);
 	}
 }
+//UART
+void uart_init(unsigned int ubrr){
+	UBRR0H =(unsigned char)(ubrr >>8);
+	UBRR0L =(unsigned char)ubrr;
+	UCSR0B =(1 <<RXEN0) |(1 << TXEN0);
+	UCSR0C =(1 <<UCSZ01)| (1<< UCSZ00);
+}
+//==================================================//
+void uart_transmit(unsigned char data){
+	while (!(UCSR0A & (1 << UDRE0)));
+	UDR0 = data;
+}
+//==================================================//
+void uart_print(const char *str){
+	while (*str) {
+		uart_transmit(*str++);
+	}
+}
+//==================================================//
+void envia_info(){
+	char buffer[50];
+	int mag_int = (int)mag;
+	int mag_dec = (int)((mag - mag_int) * 10);
+	if (mag_dec < 0) mag_dec = -mag_dec;
+	
+	int freq_int = (int)freq;
+	int freq_dec = (int)((freq - freq_int) * 10);
+	if (freq_dec < 0) freq_dec = -freq_dec;
+	uart_print("frecuencia y magnitud maxima leida: ");
+	sprintf(buffer,"%d.%d Hz %d.%d \r\n",freq_int,freq_dec,mag_int,mag_dec);
+	uart_print(buffer);
+}
+//==================================================//

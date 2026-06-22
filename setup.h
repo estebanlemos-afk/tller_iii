@@ -61,6 +61,11 @@ void prom_FFT();
 #define F_MIN_HZ_SND	700UL
 #define F_MAX_HZ_SND	900UL
 
+//servo
+#define POS_IZQUIERDA 250
+#define POS_CENTRO    375
+#define POS_DERECHA   500
+
 /* OCR1A para frecuencia objetivo con N=64 */
 #define OCR_FROM_FREQ(f) ((uint16_t)((F_CPU / (2 * PRESCALER * (f))) - 1))
 
@@ -68,6 +73,8 @@ uint16_t mapping(int v_act);
 void timer1_ctc_init(uint16_t f_target);
 void timer1_set_freq(uint16_t f_target);
 void working(void);
+//servo
+void init_pwm(void);
 
 //UART
 #define BAUD 57600

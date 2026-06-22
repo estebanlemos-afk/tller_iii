@@ -203,6 +203,14 @@ void working(){
 		timer1_set_freq(500);
 	}
 }
+//servo
+void init_pwm(void){
+	DDRE |= (1 << PE3); // Configurar PD3 (OC3A) como salida
+	TCCR3A = (1 << COM3A1) | (1 << WGM11);
+	TCCR3B = (1 << WGM13) | (1 << WGM12) | (1 << CS11) | (1 << CS10);
+	ICR3 = 4999;
+	OCR3A=POS_CENTRO;
+}
 //UART
 void uart_init(unsigned int ubrr){
 	UBRR0H =(unsigned char)(ubrr >>8);

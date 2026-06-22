@@ -200,7 +200,7 @@ void working(){
 	if (freq > F_MIN_HZ_SND && freq < F_MAX_HZ_SND) {
 		timer1_set_freq(mapping((int)freq)); 
 		} else {
-		timer1_set_freq(800);
+		timer1_set_freq(500);
 	}
 }
 //UART

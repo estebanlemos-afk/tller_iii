@@ -16,8 +16,8 @@ int main(void)
 	DDRB=255;
 	PORTB=0;
 
-    //iniciar a velocidad normal (800Hz)
-    timer1_ctc_init(800);
+    //iniciar a velocidad normal (500Hz)
+    timer1_ctc_init(500);
 	
     sei();
 
